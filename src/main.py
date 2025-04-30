@@ -2,8 +2,6 @@ import turtle as t
 import math as m
 import subprocess
 
-# PREREQ: sox; python3-tkinter
-
 def play_chord(chord, notes_in_octave):
     base_freq = 440
     time = "1.0"
