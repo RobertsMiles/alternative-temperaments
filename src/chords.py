@@ -19,6 +19,30 @@ def go_to_note(notes_in_octave, note, graphics_scaling):
     angle = 2 * m.pi / notes_in_octave * note
     t.goto(m.cos(angle) * graphics_scaling, m.sin(angle) * graphics_scaling)
 
+def draw_graph(t):
+    t.resetscreen()
+
+    # draw mod notes_in_octave graph
+    t.color("black")
+    t.up()
+    t.goto(graphics_scaling, 0)
+    t.down()
+    for note in range(notes_in_octave + 1):
+        t.color("red")
+        t.stamp()
+        t.color("black")
+        go_to_note(notes_in_octave, note, graphics_scaling)
+
+    # draw chord triple
+    t.up()
+    for i in range(3):
+        note = chord[i]
+        go_to_note(notes_in_octave, note, graphics_scaling)
+        t.color("blue")
+        t.down()
+    note = chord[0]
+    go_to_note(notes_in_octave, note, graphics_scaling)
+
 
 # MAIN
 
@@ -43,50 +67,26 @@ chords = [
     [i, i+2, i+5] for i in range(8) 
 ]
 '''
-
+'''
 notes_in_octave = 13
 chords = [[i, i+3, i+8] for i in range(0,notes_in_octave,1)] \
     + [[i, i+3, i+8] for i in range(0,notes_in_octave,2)] \
     + [[j, j+3, j+8] for j in range(0,notes_in_octave,3)] \
     + [[j, j+3, j+8] for j in range(0,notes_in_octave,4)] \
     + [[j, j+3, j+8] for j in range(0,notes_in_octave,5)]
+    '''
+
+notes_in_octave = 13
+
+chords = [
+
+]
 
 for chord_index in range(len(chords)):
-    '''
-    try:
-        a, b, c = input("Chord: ").split()
-    except:
-        quit()
-    
-    chord[0] = int(a)
-    chord[1] = int(b)
-    chord[2] = int(c)
-    '''
 
     chord = chords[chord_index]
 
-    t.resetscreen()
-
-    # draw mod notes_in_octave graph
-    t.color("black")
-    t.up()
-    t.goto(graphics_scaling, 0)
-    t.down()
-    for note in range(notes_in_octave + 1):
-        t.color("red")
-        t.stamp()
-        t.color("black")
-        go_to_note(notes_in_octave, note, graphics_scaling)
-
-    # draw chord triple
-    t.up()
-    for i in range(3):
-        note = chord[i]
-        go_to_note(notes_in_octave, note, graphics_scaling)
-        t.color("blue")
-        t.down()
-    note = chord[0]
-    go_to_note(notes_in_octave, note, graphics_scaling)
+    draw_graph(t)
 
     print()
     print(chord)
