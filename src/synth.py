@@ -3,6 +3,16 @@ import math
 from math import sin
 import wave
 from io import BytesIO, SEEK_SET
+import random
+
+'''
+#def synth_sine(f, r=44100, l=44100, a=1):
+#    for x in range(44100):
+#        yield int(127.5 + a * 127.5 * sin(2 * math.pi * x * f / 44100))
+
+def synth_two_sine(f1, f2, r=44100, l=44100, a=1):
+    return bytes((int(127.5 + a * 127.5 * sin(2 * math.pi * x * f1 / 44100)) + int(127.5 + a * 127.5 * sin(2 * math.pi * x * f2 / 44100))) // 2 for x in range(44100))
+
 
 def synth_saw(f, r=44100, l=44100, a=1):
     return bytes(int(((f * 255 / r  * x) % 255) * a) for x in range(44100))
@@ -29,6 +39,7 @@ def synth_sine(f, r=44100, l=44100, a=1):
 #def sin(f, r=44100, l=44100, a=1):
 #    for x in range(44100):
 #        yield int(127.5 + a * 127.5 * sin(2 * math.pi * x * f / 44100))
+'''
 
 def sine_composition(*freqs: int, r = 44100, l = 44100, a = 1):
     """
@@ -62,27 +73,35 @@ def sine_composition(*freqs: int, r = 44100, l = 44100, a = 1):
     return bytes(ret)
 
 
-#def synth_sine(f, r=44100, l=44100, a=1):
-#    for x in range(44100):
-#        yield int(127.5 + a * 127.5 * sin(2 * math.pi * x * f / 44100))
-
-def synth_two_sine(f1, f2, r=44100, l=44100, a=1):
-    return bytes((int(127.5 + a * 127.5 * sin(2 * math.pi * x * f1 / 44100)) + int(127.5 + a * 127.5 * sin(2 * math.pi * x * f2 / 44100))) // 2 for x in range(44100))
 
 
 
 
 # ~~~ MAIN ~~~
 
+base_freq = 440
+pure_intervals = [
+    [2, 1], # octave (e.g. 880Hz, 440Hz)
+    [3, 2], # fifth
+    [4, 3], # fourth
+    [5, 4], # major third
+    [6, 5], # minor third
+    [7, 6],
+    [8, 7],
+]
+
 wf = BytesIO()
 with wave.open(wf, "w") as f:
     f.setparams((1, 1, 44100, 0, "NONE", 0))
-    #print(list(sin(444)))
-    # f.writeframes(synth_two_sine(440, 660, l=44100 * 5, a=0.25))
-    f.writeframes(sine_composition(440, 550, a=0.1))
-    # f.writeframes(bytes(synth_sine(440, l=44100 * 5, a=0.25) + synth_sine(660, l=44100 * 5, a=0.25) // 2))
+    
+    '''for interval in pure_intervals:
+        f.writeframes(sine_composition(base_freq, base_freq * interval[0] / interval[1], a=0.1))
+'''
+    #for base_freq in range(100, 2000, 100):
+    while base_freq < 2000:
+        support_freq = base_freq * 8 / 7
+        f.writeframes(sine_composition(base_freq, support_freq, a=0.1)) 
+        base_freq = support_freq
 
-# with open("test.wav", "wb") as f:
-#     f.write(wf.getvalue())
 wf.seek(0, SEEK_SET)
 subprocess.run(["play", "-"], input=wf.getvalue())
